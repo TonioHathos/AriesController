@@ -12,13 +12,11 @@ Ce répertoire va vous permettre de créer plusieurs instances d'agents basées 
   - ["Verifier": Entreprise (Company)](#verifier:-entreprise-(Company))
 - [Options supplémentaires lors de la configuration d'un agent:](#options-supplémentaires-lors-de-la-configuration-d-un-agent)
   - [Revocation](#revocation)
-  - [DID Exchange](#did-exchange)
   - [Endorser](#endorser)
   - [Exécuter Indy-SDK en Backend](#executer-indy-sdk-en-backend)
   - [Mediation](#mediation)
-  - [Multi-ledger](#multi-ledger)
   - [Multi-tenancy](#multi-tenancy)
-  - [Multi-tenancy *with Mediation*!!!](#multi-tenancy-with-mediation)
+ 
 
 ## Installation et activation de la blockchain
 
@@ -34,8 +32,8 @@ Une fois que le repo a été cloné, vous allez construire des images docker pou
 
 
 ```bash
-./manage build
-./manage start --logs
+sudo ./manage build
+sudo ./manage start --logs
 
 ```
 
@@ -48,14 +46,14 @@ Les images des conteneurs Docker sont construites à l'aide de scripts qui encap
 Pour voir ce que vous pouvez faire avec le script `./manage`, une fois que votre réseau fonctionne (grâce aux commandes ci-dessus), appuyez sur Ctrl-C dans le terminal pour revenir à l'invite de commande. Votre réseau fonctionne toujours. Exécutez la commande sans arguments pour voir les informations d'utilisation du script.
 
 ```bash
-./manage
+sudo ./manage
 
 ```
 
 Si vous voulez revenir aux données de logs des noeuds, exécutez la commande avec le paramètre "logs" :
 
 ```bash
-./manage logs
+sudo ./manage logs
 
 ```
 
@@ -106,7 +104,7 @@ Une autre chose à noter à propos du fichier correspondant au ledger est l'adre
 `von-network` fournit un moyen d'accéder à l'interface de ligne de commande (CLI) d'Indy. Pour accéder à l'interface de ligne de commande d'Indy pour le réseau, allez à l'invite de commande (en utilisant Ctrl-C si nécessaire) et exécutez la commande :
 
 ```bash
-./manage indy-cli
+sudo ./manage indy-cli
 ```
 
 Exécutez la commande "help" pour voir ce que vous pouvez faire, et "exit" pour sortir de la session CLI.
@@ -120,7 +118,7 @@ Pour plus d'informations, reportez-vous à [Using the containerized `indy-cli`](
 Pour arrêter et supprimer un réseau VON en cours d'exécution, accédez à l'invité en ligne de commande (en utilisant Ctrl-C si nécessaire), puis exécutez la commande suivante :
 
 ```bash
-./manage down
+sudo ./manage down
 
 ```
 
@@ -128,14 +126,14 @@ Pour arrêter et supprimer un réseau VON en cours d'exécution, accédez à l'i
 Si vous voulez arrêter le réseau **SANS** effacer les données du ledger, utilisez la commande suivante : 
 
 ```bash
-./manage stop
+sudo ./manage stop
 
 ```
 
 Vous pouvez ensuite redémarrer le ledger en exécutant la commande normale de démarrage du réseau :
 
 ```bash
-./manage start
+sudo ./manage start
 
 ```
 
@@ -153,18 +151,137 @@ Dans le second terminal, basculez sur le répertoire en `project` de votre clone
 
 ```bash
 cd project
-./run_proj TSP
+sudo ./run_proj TSP
 ```
 
 Dans le troisième terminal, basculez sur le répertoire en `project` de votre clone du dépôt AriesController. Démarrez l'agent `Student` en lançant la commande suivante:
 
 ```bash
 cd project
-./run_proj Student
+sudo ./run_proj Student
 ```
 Dans le quatrième et dernier terminal, basculez sur le répertoire en `project` de votre clone du dépôt AriesController. Démarrez l'agent `Company` en lançant la commande suivante:
 ```bash
 cd project
-./run_proj Company
+sudo ./run_proj Company
 ```
 Désormais basculez sur [Liste des différentes fonctions autorisées pour les agents:](#liste-des-différentes-fonctions-autorisées-pour-les-agents) pour voir les différentes fonctionnalités
+
+## Liste des différentes fonctions autorisées pour les agents
+
+### "Issuer": Télécom SudParis (TSP)
+
+Au démarrage de l'agent, celui-ci créé automatiquement un "credential schema" ainsi qu'un "credential definition" correspondant au diplôme qu'il délivre.
+Il créé également de manière automatique un lien d'invitation qui devra être collé sur le terminal correspondant à l'étudiant pour que la connection puisse se faire entre les deux entités.
+Voici les différentes options possibles une fois la connection initiée:
+
+```
+    (1) Issue Credential
+    (2) See Credential requests
+    (3) Send Message
+    (4) Create New Invitation
+    (X) Exit?
+```
+Un point à noter est lorsque TSP utilise l'option 1: le choix du "degree" est manuel et est à rentrer manuellement,
+tandis que si l'étudiant fait une requête pour obtenir un diplome de la part de TSP, le "degree" sera attribué de manière automatique en tant qu'ingénieur généraliste du numérique.
+
+### "Holder": Etudiant (Student)
+
+Au démarrage de l'agent, l'étudiant doit entrer un lien d'invition pour pouvoir accéder à différentes options d'intéraction.
+Après avoir rentré ce lien, voici les différentes options:
+
+```
+    (1) Send message
+    (2) Input New Invitation
+    (3) See the received credentials 
+    (4) Credential request
+    (5) DIDs list
+    (X) Exit?
+```
+
+A noter: si vous voulez faire une requête pour obtenir un diplome, il faudra copier/coller l'identifiant du "credential definition" dévoilé après la création de l'agent TSP sur son terminal.
+
+### "Verifier": Entreprise (Company)
+
+Au démarrage de l'agent, l'entreprise émet un lien d'invitation à coller par l'étudiant pour créer une connection.
+Une fois la connection initiée, voici les options de l'entreprise:
+
+```
+    (1) Send Proof Request
+    (2) Send Message
+    (X) Exit?
+```
+
+Si vous choisissez l'option 1, il faudra bien faire attention à renseigner l'identifiant du "credential definition" correspondant à l'école qui vous intéresse (dans notre cas TSP).
+
+## Options supplémentaires lors de la mise en place d'un agent:
+
+### Révocation
+
+Tout d'abord, pour pouvoir faire fonctionner la révocation d'attestation d'identités de type Anoncreds" il faut utiliser un autre répertoire en tapant la commande suivante:
+
+```bash
+git clone https://github.com/bcgov/indy-tails-server.git
+cd indy-tails-server/docker
+sudo ./manage build
+sudo ./manage start
+```
+
+L'option de révocation ne pourra être utilisé que par TSP car c'est le seul à pouvoir envoyer des attestations d'identités.
+Pour activier l'option pour TSP, tapez la commande suivante:
+
+```bash
+sudo ./run_proj TSP --revocation
+```
+
+Ainsi, lorsque vous soumettez une attestation d'identité, notez le "Registry revocation ID" ainsi que le "Credential Revocation ID". Pour qu'une révocation soie pleinement prise en compte, il faut la publier sur le leger.
+
+### Endorser
+
+Cette approche fait fonctionner TSP en tant qu'agent non privilégié et lance un agent "endorser" dédié dans un sous-processus (une instance d'ACA-Py) pour approuver les transactions de TSP.
+
+Démarrez une instance du réseau VON et un serveur Tails :
+
+- Suivez la section [Installation et activation de la blockchain](#installation-et-activation-de-la-blockchain) pour démarrer le ledger.
+- Exécutez un serveur Tails de registre de révocation AnonCreds afin de prendre en charge la révocation en suivant les instructions de cette section: [Revocation](#revocation)
+
+Démarrez TSP en tant qu'auteur :
+
+```bash
+TAILS_FILE_COUNT=5 sudo ./run_demo faber --endorser-role author --revocation
+```
+
+Démarrez l'agent Student normalement :
+
+```bash
+sudo ./run_proj Student
+```
+
+
+### Exécuter Indy-SDK en backend
+
+Ceci exécute l'agent en utilisant les anciennes (et non recommandées) bibliothèques indy-sdk au lieu de [Aries Askar](:uhttps://github.com/hyperledger/aries-ask) :
+
+```bash
+./run_proj TSP --wallet-type indy
+```
+
+### Médiation
+
+Pour activer la médiation, lancez l'agent `TSP` ou `Student` avec l'option `--mediation` :
+
+```bash
+./run_proj TSP --mediation
+```
+
+Cela démarrera un agent "médiateur" avec TSP ou Student et configurera automatiquement la connexion TSP/Student pour utiliser le médiateur.
+
+### Multi-tenancy
+
+Pour activer la fonction multi-locataires sur Student ou TSP, activer la commande suivante:
+
+```bash
+sudo ./run_proj TSP --multitenant
+```
+
+Note: _Il est possible de combiner l'option multi-locataires et médiateur!_
