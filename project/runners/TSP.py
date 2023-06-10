@@ -401,7 +401,7 @@ async def main(args):
         exchange_tracing = False
         options = (
             "    (1) Issue Credential\n"
-            "    (2) See Credential Proposals\n"
+            "    (2) See Credential resquests\n"
             "    (3) Send Message\n"
             "    (4) Create New Invitation\n"
         )
