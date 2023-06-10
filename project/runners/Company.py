@@ -191,7 +191,7 @@ async def main(args):
             # schema_attrs=company_schema_attrs,
         )
 
-        with log_timer("Publish schema and cred def duration:"):
+        """with log_timer("Publish schema and cred def duration:"):
             # define schema
             version = format(
                 "%d.%d.%d"
@@ -208,7 +208,7 @@ async def main(args):
                 ["employee_id", "name", "date", "position"],
                 support_revocation=False,
                 revocation_registry_size=TAILS_FILE_COUNT,
-            )
+            )"""
 
         # generate an invitation for Student
         await company_agent.generate_invitation(display_qr=False, wait=True)
